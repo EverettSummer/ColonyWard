@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="All rights reserved"
+
+[[mods]]
+    modId="colonyward"
+    version="${file.jarVersion}"
+    displayName="Colony Ward"
+    displayTest="IGNORE_ALL_VERSION"
+    logoFile="logo.png"
+    authors="Box.moe, RomDmitriy"
+    description="This mod prevent unwanted mobs from spawning inside colonies"
+
+[[dependencies.colonyward]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.colonyward]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.colonyward]]
+    modId="minecolonies"
+    type="required"
+    versionRange="[1.1.1307-1.21.1-snapshot,)"
+    ordering="AFTER"
+    side="BOTH"

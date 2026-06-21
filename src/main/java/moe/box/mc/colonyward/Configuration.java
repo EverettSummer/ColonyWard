@@ -3,30 +3,30 @@ package moe.box.mc.colonyward;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Configuration {
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> breeding;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> bucket;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> chunk_generation;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> command;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> conversion;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> dispenser;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> event;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> jockey;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> natural;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> patrol;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> reinforcement;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnEgg;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> spawner;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> structure;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> summoned;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> triggered;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> breeding;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> bucket;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> chunk_generation;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> command;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> conversion;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> dispenser;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> event;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> jockey;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> natural;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> patrol;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> reinforcement;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> spawnEgg;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> spawner;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> structure;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> summoned;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> triggered;
+    private final ModConfigSpec.ConfigValue<List<? extends String>> trial_spawner;
 
-    public Configuration(ForgeConfigSpec.Builder builder) {
+    public Configuration(ModConfigSpec.Builder builder) {
         builder.comment("Blacklist (All mobs or mods defined here will be prevented from spawning inside a colony)").push("general");
 
         breeding = builder.comment("Mobs spawned from breeding")
@@ -42,7 +42,7 @@ public class Configuration {
                 .defineList("command", Lists.newArrayList(), o -> o instanceof String);
 
         conversion = builder.comment("Mobs spawned from conversions (Like a creeper becoming a charge creeper)")
-                .defineList("spawnEgg", Lists.newArrayList(), o -> o instanceof String);
+                .defineList("conversion", Lists.newArrayList(), o -> o instanceof String);
 
         dispenser = builder.comment("Mobs spawned from dispensers")
                 .defineList("dispenser", Lists.newArrayList(), o -> o instanceof String);
@@ -87,15 +87,15 @@ public class Configuration {
                         "cnb:sporeling",
                         "ars_nouveau:wilden_hunter",
                         "ars_nouveau:wilden_stalker"
-                        ), o -> o instanceof String);
+                ), o -> o instanceof String);
 
         patrol = builder.comment("Mobs spawned as patrol (Like the pillagers)")
                 .defineList("patrol", Lists.newArrayList("minecraft:pillager", "minecraft:vindicator"), o -> o instanceof String);
 
         reinforcement = builder.comment("Mobs spawned as reinforcement (Like Zombified Piglin calling for reinforcement when attacked)")
-                .defineList("summoned", Lists.newArrayList(), o -> o instanceof String);
+                .defineList("reinforcement", Lists.newArrayList(), o -> o instanceof String);
 
-        spawnEgg = builder.comment("Mobs spawned from a spawn egg ")
+        spawnEgg = builder.comment("Mobs spawned from a spawn egg")
                 .defineList("spawnEgg", Lists.newArrayList(), o -> o instanceof String);
 
         spawner = builder.comment("Mobs spawned from spawners")
@@ -108,20 +108,23 @@ public class Configuration {
                 .defineList("summoned", Lists.newArrayList(), o -> o instanceof String);
 
         triggered = builder.comment("Mobs spawned from a trigger (Like with the skeleton trap (skeleton horse))")
-                .defineList("summoned", Lists.newArrayList("minecraft:skeleton_horse"), o -> o instanceof String);
+                .defineList("triggered", Lists.newArrayList("minecraft:skeleton_horse"), o -> o instanceof String);
+
+        trial_spawner = builder.comment("Mobs spawned from trial spawners")
+                .defineList("trial_spawner", Lists.newArrayList(), o -> o instanceof String);
 
         builder.pop();
     }
 
     public boolean isEntityInBlackList(ResourceLocation entityResource, MobSpawnType spawnReason) {
         var list = getBlacklist(spawnReason);
-        if(list == null) return false;
+        if (list == null) return false;
 
         return list.contains(entityResource.toString()) || list.contains(entityResource.getNamespace());
     }
-    
-    private List<? extends String> getBlacklist(MobSpawnType spawnReason){
-        return switch(spawnReason){
+
+    private List<? extends String> getBlacklist(MobSpawnType spawnReason) {
+        return switch (spawnReason) {
             case NATURAL -> natural.get();
             case CHUNK_GENERATION -> chunk_generation.get();
             case SPAWNER -> spawner.get();
@@ -138,6 +141,7 @@ public class Configuration {
             case COMMAND -> command.get();
             case DISPENSER -> dispenser.get();
             case PATROL -> patrol.get();
+            case TRIAL_SPAWNER -> trial_spawner.get();
         };
     }
 }
